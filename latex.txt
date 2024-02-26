@@ -1,0 +1,72 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+
+% Adjust the page margins if you need more space
+\usepackage[a4paper, margin=1in]{geometry}
+
+% Customize headers and footers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Your Name}
+\lhead{Course Name}
+\rfoot{Page \thepage}
+
+% Define new commands for question, solution, etc.
+\newenvironment{question}[1]{\noindent\textbf{Question #1.}}{}
+\newenvironment{solution}[1]{\noindent\textbf{Solution to Question #1.}}{}
+
+\begin{document}
+
+\title{Your Exam Title}
+\author{Your Name}
+\date{\today}
+\maketitle
+
+\section*{Instructions}
+\begin{itemize}
+    \item Answer all questions.
+    \item Show all your work clearly.
+    \item You have 2 hours to complete the exam.
+    \item Write your answers in the space provided or clearly label where each answer begins.
+\end{itemize}
+
+\section*{Question Paper}
+
+\begin{question}{1}
+    What is the capital of France?
+\end{question}
+
+\begin{question}{2}
+    Solve the following equation:
+    \[ x^2 - 5x + 6 = 0 \]
+\end{question}
+
+\begin{question}{3}
+    Evaluate the integral:
+    \[ \int_{0}^{\pi} \sin(x) \, dx \]
+\end{question}
+
+% Add more questions as needed
+
+\newpage
+
+\section*{Solutions}
+
+\begin{solution}{1}
+    The capital of France is Paris.
+\end{solution}
+
+\begin{solution}{2}
+    To solve the equation \( x^2 - 5x + 6 = 0 \), we factor it as \( (x - 2)(x - 3) = 0 \), so the solutions are \( x = 2 \) and \( x = 3 \).
+\end{solution}
+
+\begin{solution}{3}
+    We know that \( \int \sin(x) \, dx = -\cos(x) + C \). Evaluating from \(0\) to \(\pi\):
+    \[ \int_{0}^{\pi} \sin(x) \, dx = -\cos(\pi) - (-\cos(0)) = -(-1) - (-1) = 2 \]
+\end{solution}
+
+% Add solutions to other questions
+
+\end{document}
