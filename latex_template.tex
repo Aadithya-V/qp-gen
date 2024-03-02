@@ -32,24 +32,16 @@
 {\small \bfseries 	Attempt any five questions }
 
 \begin{questions}
-	\pointsdroppedatright
+    {{range $_, $value := .}}
+    \pointsdroppedatright
 	\question
 	\begin{parts}
-		\part[9] Type question 1 here. Type question 1 here.Type question 1 here.Type question 1 here.Type question 1 here.Type question 1 here.Type question 1 here.Type question 1 here. (CO1)  \textbf{\droppoints}
+		\part[9] {{ $value }} \textbf{\droppoints}
 		\vspace{0.05in}
-        \centering \textbf{OR}
-		\part[9] Type question 2 here. Type question 2 here. Type question 2 here. Type question 2 here. Type question 2 here. Type question 2 here. Type question 2 here. (CO1)  \textbf{\droppoints}
-	\end{parts}
+        \end{parts}
 \vspace{0.2in}
-	\pointsdroppedatright
-	\question
-	\begin{parts}
-		\part[9] Type question 1 here. Type question 1 here.Type question 1 here.Type question 1 here.Type question 1 here.Type question 1 here.Type question 1 here.Type question 1 here. (CO1)  \textbf{\droppoints}
-		\vspace{0.05in}
-		\part[9] Type question 2 here. Type question 2 here. Type question 2 here. Type question 2 here. Type question 2 here. Type question 2 here. Type question 2 here. (CO1)  \textbf{\droppoints}
-	\end{parts}
+{{ end }}
 \end{questions}
 \vspace{0.75in}
 {\large \bfseries Best wishes}
 \end{document}
-

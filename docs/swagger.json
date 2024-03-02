@@ -1,0 +1,141 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "qp gen service",
+        "title": "qp gen service",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/v1/generate-latex-q-paper-sets": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Generate Q Paper Sets In Latex .tex format",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LATEX"
+                ],
+                "summary": "Generate Q Paper Sets In Latex .tex format",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "GenerateQPaperRequestsRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.GenerateQpaperSetsInLatexRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.ExamDetails": {
+            "type": "object",
+            "properties": {
+                "exam_code": {
+                    "type": "string"
+                },
+                "exam_date": {
+                    "type": "string"
+                },
+                "exam_duration": {
+                    "type": "string"
+                },
+                "exam_end_time": {
+                    "type": "string"
+                },
+                "exam_instructions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "exam_name": {
+                    "type": "string"
+                },
+                "exam_session": {
+                    "type": "string"
+                },
+                "exam_start_time": {
+                    "type": "string"
+                },
+                "exam_total_marks": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.GenerateQpaperSetsInLatexRequest": {
+            "type": "object",
+            "properties": {
+                "exam_details": {
+                    "$ref": "#/definitions/models.ExamDetails"
+                },
+                "number_of_sets": {
+                    "type": "integer"
+                },
+                "questions_by_type": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.QuestionsByType"
+                    }
+                }
+            }
+        },
+        "models.QuestionsByType": {
+            "type": "object",
+            "properties": {
+                "choice_allowed": {
+                    "type": "boolean"
+                },
+                "marks": {
+                    "type": "number"
+                },
+                "questions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "section_name": {
+                    "type": "string"
+                },
+                "total_questions": {
+                    "type": "integer"
+                },
+                "type_number": {
+                    "type": "integer"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Enter the Bearer Authorization string as following: `Bearer Generated-JWT-Token`",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

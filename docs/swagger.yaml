@@ -1,0 +1,92 @@
+definitions:
+  models.ExamDetails:
+    properties:
+      exam_code:
+        type: string
+      exam_date:
+        type: string
+      exam_duration:
+        type: string
+      exam_end_time:
+        type: string
+      exam_instructions:
+        items:
+          type: string
+        type: array
+      exam_name:
+        type: string
+      exam_session:
+        type: string
+      exam_start_time:
+        type: string
+      exam_total_marks:
+        type: string
+    type: object
+  models.GenerateQpaperSetsInLatexRequest:
+    properties:
+      exam_details:
+        $ref: '#/definitions/models.ExamDetails'
+      number_of_sets:
+        type: integer
+      questions_by_type:
+        items:
+          $ref: '#/definitions/models.QuestionsByType'
+        type: array
+    type: object
+  models.QuestionsByType:
+    properties:
+      choice_allowed:
+        type: boolean
+      marks:
+        type: number
+      questions:
+        items:
+          type: string
+        type: array
+      section_name:
+        type: string
+      total_questions:
+        type: integer
+      type_number:
+        type: integer
+    type: object
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: qp gen service
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: qp gen service
+  version: "1.0"
+paths:
+  /api/v1/generate-latex-q-paper-sets:
+    post:
+      description: Generate Q Paper Sets In Latex .tex format
+      parameters:
+      - description: request body
+        in: body
+        name: GenerateQPaperRequestsRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.GenerateQpaperSetsInLatexRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Generate Q Paper Sets In Latex .tex format
+      tags:
+      - LATEX
+securityDefinitions:
+  BearerAuth:
+    description: 'Enter the Bearer Authorization string as following: `Bearer Generated-JWT-Token`'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

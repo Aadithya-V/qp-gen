@@ -9,6 +9,6 @@ type Q struct {
 
 type Qq struct {
 	Marks float32
-	Text  []byte // can be empty
+	Text  string // can be empty
 	Qq    []*Qq  // sub-divisions
 }
