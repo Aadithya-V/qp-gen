@@ -30,9 +30,14 @@ func GenerateQpaperSetsInLatex(c *gin.Context, req *models.GenerateQpaperSetsInL
 			QuestionsByType: QS.PickQSet(),
 		}
 
+		fmt.Println(templData)
+		for k, v := range templData.QuestionsByType {
+			fmt.Println(k, v)
+		}
+
 		c.Writer.WriteString("\n-------------Question Paper Set Start--------------- \n")
 
-		err = tmpl.Execute(c.Writer, templData.QuestionsByType[1])
+		err = tmpl.Execute(c.Writer, templData)
 		if err != nil {
 			fmt.Println("Error executing template:", err)
 			return err
@@ -51,13 +56,14 @@ type GenerateQpaperSetsInLatexResponse struct {
 
 type TemplateData struct {
 	ExamDetails     models.ExamDetails
-	QuestionsByType map[int][]string
+	QuestionsByType map[int]TemplQs
 }
 
 type Q struct {
-	Type int
-	Id   int
-	Text string
+	Type  int
+	Id    int
+	Text  string
+	Marks float32
 	//Qq          *Qq
 	PickedCount int
 }
@@ -86,33 +92,58 @@ func BuildQStore(QsByType []*models.QuestionsByType) QStore {
 			ret.ByTypes[qsType.TypeNumber] = make([]*Q, 0)
 		}
 
+		ret.QsPerType[qsType.TypeNumber] = qsType.TotalQuestions
+
 		for _, qStr := range qsType.Questions {
 			var q = Q{
 				Type:        qsType.TypeNumber,
+				Marks:       qsType.Marks,
 				Text:        qStr,
 				PickedCount: 0,
 				// Id
 			}
 			ret.ByTypes[qsType.TypeNumber] = append(ret.ByTypes[qsType.TypeNumber], &q)
 		}
-		ret.QsPerType[qsType.TypeNumber] = qsType.TotalQuestions
 	}
 
 	return ret
 }
 
-// number of qs per type in opt
-func (QS *QStore) PickQSet() map[int][]string {
+type TemplQs struct {
+	Marks float32
+	Qs    []string
+}
 
-	ret := make(map[int][]string)
+// number of qs per type in opt
+func (QS *QStore) PickQSet() map[int]TemplQs {
+
+	ret := make(map[int]TemplQs)
 
 	for qType, qs := range QS.ByTypes {
-		if _, ok := ret[qType]; !ok { // if not requrired here
-			ret[qType] = make([]string, 0)
-		}
+		if val, ok := ret[qType]; !ok {
 
-		ret[qType] = append(ret[qType], pickQs(qs, QS.QsPerType[qType])...)
+			var marks float32
+			if len(qs) > 0 {
+				marks = qs[0].Marks
+			}
+
+			s := TemplQs{
+				Marks: marks,
+				Qs:    make([]string, 0),
+			}
+			ret[qType] = s
+		} else {
+			val.Qs = append(ret[qType].Qs, pickQs(qs, QS.QsPerType[qType])...)
+			ret[qType] = val
+		}
+		fmt.Printf("\ntype: %v marks: %v question: %s", qType, ret[qType].Marks, ret[qType].Qs[0])
 	}
+
+	fmt.Println("TemplData")
+
+	/* for k, v := range ret {
+		fmt.Printf("\ntype: %v marks: %v question: %s", k, v.Marks, v.Qs[0])
+	} */
 
 	return ret
 }

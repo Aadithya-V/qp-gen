@@ -10,33 +10,33 @@
 	\noindent
 	\begin{minipage}[l]{0.1\textwidth}
 		\noindent
-		\includegraphics[width=1.8\textwidth]{nitsri}
+		\includegraphics[width=1.8\textwidth]{pic}
 	\end{minipage}
 \hfill
 \begin{minipage}[c]{0.8\textwidth}
 	\begin{center}
-		{\large	SRM Valliammai Enginnering College \par
-		\large	Department of Computer Science And Engineering	\par
-	\large \textbf{Automata Theory ( CS-101)}	\par
-\small	End Term, Date: Feb 25, 2020}
+		{\large	{{.ExamDetails.College}} \par
+		\large	{{.ExamDetails.Department}}	\par
+	\large \textbf{ {{.ExamDetails.SubjectName}} ({{.ExamDetails.SubjectCode}})}	\par
+\small	{{.ExamDetails.ExamName}}, Date: {{.ExamDetails.Date}}}
 	\end{center}
 \end{minipage}
 \par
 \vspace{0.2in}
 \noindent
-\uline{Timing: 2:00 to 5:00 PM	\hfill Autumn 2019-20, VII Semester		\hfill Max mark: 90}
+\uline{Timing: {{.ExamDetails.StartTime}} to {{.ExamDetails.EndTime}}	\hfill {{.ExamDetails.AcademicYear}}, {{.ExamDetails.Semester}}		\hfill Max mark: {{.ExamDetails.TotalMarks}}}
 \par 
 \vspace{0.15in}
 \noindent
 \centering
-{\small \bfseries 	Attempt any five questions }
+{\small \bfseries {{range $_, $value := .ExamDetails.Instructions}}	{{ $value }} {{ end }}}
 
 \begin{questions}
-    {{range $_, $value := .}}
+    {{range $_, $value := .QuestionsByType}}
     \pointsdroppedatright
 	\question
 	\begin{parts}
-		\part[9] {{ $value }} \textbf{\droppoints}
+		\part[$value.Marks] {{ $value.Qs }} \textbf{\droppoints}
 		\vspace{0.05in}
         \end{parts}
 \vspace{0.2in}

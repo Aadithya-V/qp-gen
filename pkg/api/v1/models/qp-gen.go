@@ -1,8 +1,13 @@
 package models
 
 type ExamDetails struct {
-	Name         string   `json:"exam_name"`
-	Code         string   `json:"exam_code"`
+	College      string   `json:"college_name"`
+	Department   string   `json:"department_name"`
+	ExamName     string   `json:"examination_name"`
+	SubjectName  string   `json:"subject_name"`
+	SubjectCode  string   `json:"subject_code"`
+	Semester     string   `json:"semester"`
+	AcademicYear string   `json:"academic_year"`
 	Date         string   `json:"exam_date"`
 	Duration     string   `json:"exam_duration"`
 	StartTime    string   `json:"exam_start_time"`
@@ -25,7 +30,8 @@ type QuestionsByType struct {
 type GenerateQpaperSetsInLatexRequest struct {
 	ExamDetails *ExamDetails `json:"exam_details"`
 
-	NumberOfSets int8 `json:"number_of_sets"`
+	NumberOfSets int8     `json:"number_of_sets"`
+	QpaperCodes  []string `json:"q_paper_codes"`
 
 	QuestionsByType []*QuestionsByType `json:"questions_by_type"`
 }

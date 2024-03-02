@@ -62,7 +62,13 @@ const docTemplate = `{
         "models.ExamDetails": {
             "type": "object",
             "properties": {
-                "exam_code": {
+                "academic_year": {
+                    "type": "string"
+                },
+                "college_name": {
+                    "type": "string"
+                },
+                "department_name": {
                     "type": "string"
                 },
                 "exam_date": {
@@ -80,9 +86,6 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
-                "exam_name": {
-                    "type": "string"
-                },
                 "exam_session": {
                     "type": "string"
                 },
@@ -90,6 +93,18 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "exam_total_marks": {
+                    "type": "string"
+                },
+                "examination_name": {
+                    "type": "string"
+                },
+                "semester": {
+                    "type": "string"
+                },
+                "subject_code": {
+                    "type": "string"
+                },
+                "subject_name": {
                     "type": "string"
                 }
             }
@@ -102,6 +117,12 @@ const docTemplate = `{
                 },
                 "number_of_sets": {
                     "type": "integer"
+                },
+                "q_paper_codes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "questions_by_type": {
                     "type": "array",
