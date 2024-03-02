@@ -27,27 +27,29 @@
 \uline{Timing: {{.ExamDetails.StartTime}} to {{.ExamDetails.EndTime}}	\hfill {{.ExamDetails.AcademicYear}}, {{.ExamDetails.Semester}}		\hfill Max mark: {{.ExamDetails.TotalMarks}}}
 \par 
 \vspace{0.15in}
-\noindent
+%\noindent
 % \centering
 % {\small \bfseries {{range $_, $value := .ExamDetails.Instructions}}	{{ $value }} {{ end }}}
-\centering
-\newline
-{\small \bfseries {Section-A}}
 
 \begin{questions}
-    {{range $_, $value := .QuestionsByType}}
-	\newcommand{\marksvariable}{{"{"}}{{ $value.Marks}}{{"}"}}
+	\marksvariable
+    {{range $type, $value := .QuestionsByType}}
+	\renewcommand{\marksvariable}{{"{"}}{{ $value.Marks}}{{"}"}}
+	\newline
+	\centering
+	\newline
+	{\medium \bfseries {Section-}}{{$type}}
     \pointsdroppedatright
 	{{range $_, $value := $value.Qs}}
 	\question
 	\begin{parts}
 		\part[\marksvariable] {{ $value }} \textbf{\droppoints}
 		\vspace{0.05in}
-        \end{parts}
+    \end{parts}
 \vspace{0.2in}
 {{ end }}
-\end{questions}
 {{ end }}
+\end{questions}
 \vspace{0.75in}
 {\large \bfseries Best wishes}
 \end{document}
