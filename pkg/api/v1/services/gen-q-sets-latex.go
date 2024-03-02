@@ -120,7 +120,7 @@ func (QS *QStore) PickQSet() map[int]TemplQs {
 	ret := make(map[int]TemplQs)
 
 	for qType, qs := range QS.ByTypes {
-		if val, ok := ret[qType]; !ok {
+		if _, ok := ret[qType]; !ok {
 
 			var marks float32
 			if len(qs) > 0 {
@@ -132,11 +132,12 @@ func (QS *QStore) PickQSet() map[int]TemplQs {
 				Qs:    make([]string, 0),
 			}
 			ret[qType] = s
-		} else {
-			val.Qs = append(ret[qType].Qs, pickQs(qs, QS.QsPerType[qType])...)
-			ret[qType] = val
 		}
-		fmt.Printf("\ntype: %v marks: %v question: %s", qType, ret[qType].Marks, ret[qType].Qs[0])
+		val := ret[qType]
+		val.Qs = append(ret[qType].Qs, pickQs(qs, QS.QsPerType[qType])...)
+		ret[qType] = val
+
+		// fmt.Printf("\ntype: %v marks: %v question: %s", qType, ret[qType].Marks, ret[qType].Qs[0])
 	}
 
 	fmt.Println("TemplData")
@@ -149,7 +150,7 @@ func (QS *QStore) PickQSet() map[int]TemplQs {
 }
 
 func pickQs(qs []*Q, nums int) []string {
-
+	fmt.Println("MARKER pickQs()")
 	ret := make([]string, 0)
 
 	r := rand.Intn(len(qs) - 1)
@@ -174,6 +175,12 @@ func pickQs(qs []*Q, nums int) []string {
 			nums--
 		}
 	}
+	fmt.Println("MARKER NOW")
+	for _, s := range ret {
+
+		fmt.Println(s)
+	}
+
 	return ret
 }
 

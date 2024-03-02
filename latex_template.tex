@@ -28,20 +28,26 @@
 \par 
 \vspace{0.15in}
 \noindent
+% \centering
+% {\small \bfseries {{range $_, $value := .ExamDetails.Instructions}}	{{ $value }} {{ end }}}
 \centering
-{\small \bfseries {{range $_, $value := .ExamDetails.Instructions}}	{{ $value }} {{ end }}}
+\newline
+{\small \bfseries {Section-A}}
 
 \begin{questions}
     {{range $_, $value := .QuestionsByType}}
+	\newcommand{\marksvariable}{{"{"}}{{ $value.Marks}}{{"}"}}
     \pointsdroppedatright
+	{{range $_, $value := $value.Qs}}
 	\question
 	\begin{parts}
-		\part[$value.Marks] {{ $value.Qs }} \textbf{\droppoints}
+		\part[\marksvariable] {{ $value }} \textbf{\droppoints}
 		\vspace{0.05in}
         \end{parts}
 \vspace{0.2in}
 {{ end }}
 \end{questions}
+{{ end }}
 \vspace{0.75in}
 {\large \bfseries Best wishes}
 \end{document}
