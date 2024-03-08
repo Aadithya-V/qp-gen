@@ -64,3 +64,15 @@ http://localhost:8001/qp-gen/api/docs/index.html#/  - swagger
     }
   ]
 }
+
+
+
+{{if $question.Marks}}
+\part[{{$question.Marks}}] 
+{{else}}
+\part[] 
+{{end}}
+{{ $question.Text }} 
+{{if $question.Marks}}
+\droppoints
+{{end}}
