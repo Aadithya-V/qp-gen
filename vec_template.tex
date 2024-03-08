@@ -7,7 +7,7 @@
 
 \begin{document}
 	%\thispagestyle{empty}
-
+\hspace{0.75in}
 \begin{minipage}[c]{0.8\textwidth}
 	\begin{center}
 		{\large	{{.ExamDetails.College}} \par
@@ -21,10 +21,11 @@
 \noindent
 \uline{Timing: {{.ExamDetails.StartTime}} to {{.ExamDetails.EndTime}}	\hfill {{.ExamDetails.AcademicYear}}, {{.ExamDetails.Semester}}		\hfill Max mark: {{.ExamDetails.TotalMarks}}}
 \par 
-\vspace{0.15in}
+\vspace{0.25in}
 % \noindent
-% \centering
+\centering
 % {\small \bfseries {{range $_, $value := .ExamDetails.Instructions}}	{{ $value }} {{ end }}}
+\hspace{1.55in}
 {\medium \bfseries Section-A }
 \newline
 \begin{questions}
@@ -36,6 +37,8 @@
 
 {{range $type, $sectionQuestions := .QuestionsBySection}}
 \centering
+\vspace{0.25in}
+\hspace{1.55in}
 {\medium \bfseries Section-{{$type}} }
 \newline
 {{range $_, $questionPair := $sectionQuestions}}
@@ -47,13 +50,13 @@
 {{ $question.Text }} 
 \droppoints
 {{if $question.SubQuestions}} 
-\begin{parts}
+\begin{subparts}
 {{range $_, $subQuestion := $question.SubQuestions}}
-\part[{{$subQuestion.Marks}}]
+\subpart[{{$subQuestion.Marks}}]
 {{$subQuestion.Text}}
 \droppoints
 {{end}}
-\end{parts}
+\end{subparts}
 {{end}}
 {{if $question.Choice}} 
 \begin{center}
