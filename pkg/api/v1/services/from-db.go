@@ -219,7 +219,7 @@ type Question struct {
 	Type         string
 	PickedCount  int
 	Choice       bool
-	Marks        float32    `json:"marks"`
+	Marks        string     `json:"mark"`
 	Text         string     `json:"text"`          // can be empty
 	SubQuestions []Question `json:"sub_questions"` // sub-divisions
 }
