@@ -37,6 +37,8 @@ func Router() *gin.Engine {
 
 				versionOne.POST("generate-latex-q-paper-sets", controllers.GenerateQpaperSetsInLatex)
 
+				versionOne.POST("q-paper-from-db", controllers.GenerateQpaperSetsFromDB)
+
 			}
 			apiGroup.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, ginSwagger.DefaultModelsExpandDepth(1), ginSwagger.DocExpansion("none"), ginSwagger.PersistAuthorization(true)))
 

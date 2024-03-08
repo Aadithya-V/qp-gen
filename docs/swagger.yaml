@@ -32,6 +32,21 @@ definitions:
       subject_name:
         type: string
     type: object
+  models.GenerateQpaperSetsFromDBRequest:
+    properties:
+      exam_details:
+        $ref: '#/definitions/models.ExamDetails'
+      exam_type:
+        type: string
+      number_of_sets:
+        type: integer
+      q_paper_codes:
+        items:
+          type: string
+        type: array
+      subject_code:
+        type: string
+    type: object
   models.GenerateQpaperSetsInLatexRequest:
     properties:
       exam_details:
@@ -97,6 +112,26 @@ paths:
       summary: Generate Q Paper Sets In Latex .tex format
       tags:
       - LATEX
+  /api/v1/q-paper-from-db:
+    post:
+      description: Generate Q Paper Sets In Latex .tex format from db
+      parameters:
+      - description: request body
+        in: body
+        name: GenerateQpaperSetsFromDBRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.GenerateQpaperSetsFromDBRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Generate Q Paper Sets In Latex .tex format from db
+      tags:
+      - DB
 securityDefinitions:
   BearerAuth:
     description: 'Enter the Bearer Authorization string as following: `Bearer Generated-JWT-Token`'

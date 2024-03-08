@@ -1,4 +1,4 @@
-package services
+/* package services
 
 import (
 	"fmt"
@@ -22,7 +22,7 @@ func GenerateQpaperSetsInLatex(c *gin.Context, req *models.GenerateQpaperSetsInL
 
 	/* resp := GenerateQpaperSetsInLatexResponse{
 		QSets: make([][]byte, req.NumberOfSets),
-	} */
+	} 
 
 	for i := req.NumberOfSets; i > 0; i-- {
 		templData := TemplateData{
@@ -74,12 +74,7 @@ type Qq struct {
 	Qq    []*Qq  // sub-divisions
 }
 
-type QStore struct {
-	ByTypes   map[int][]*Q
-	QsPerType map[int]int
-}
-
-func BuildQStore(QsByType []*models.QuestionsByType) QStore {
+func BuildQStores(QsByType []*models.QuestionsByType) QStore {
 
 	ret := QStore{
 		ByTypes:   make(map[int][]*Q),
@@ -144,7 +139,7 @@ func (QS *QStore) PickQSet() map[int]TemplQs {
 
 	/* for k, v := range ret {
 		fmt.Printf("\ntype: %v marks: %v question: %s", k, v.Marks, v.Qs[0])
-	} */
+	} 
 
 	return ret
 }
@@ -209,4 +204,5 @@ func pickQs(qs []*Q, nums int) []string {
 		Id:   2,
 		Type: 1,
 	},
-} */
+} 
+ */

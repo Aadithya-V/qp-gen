@@ -1,14 +1,17 @@
 package main
 
+// Q for q store
 type Q struct {
 	Type        int
 	Id          int
-	Qq          *Qq
+	Qq          *Question
 	PickedCount int
 }
 
-type Qq struct {
-	Marks float32
-	Text  string // can be empty
-	Qq    []*Qq  // sub-divisions
+type Question struct {
+	Unit         string
+	Section      string
+	Marks        float32
+	Text         string     // can be empty
+	SubQuestions []Question // sub-divisions
 }

@@ -35,3 +35,14 @@ type GenerateQpaperSetsInLatexRequest struct {
 
 	QuestionsByType []*QuestionsByType `json:"questions_by_type"`
 }
+
+type GenerateQpaperSetsFromDBRequest struct {
+	ExamDetails ExamDetails `json:"exam_details"`
+
+	SubjectCode string `json:"subject_code"`
+
+	ExamType string `json:"exam_type"`
+
+	NumberOfSets int8     `json:"number_of_sets"`
+	QpaperCodes  []string `json:"q_paper_codes"`
+}

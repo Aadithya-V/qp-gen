@@ -56,6 +56,39 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/v1/q-paper-from-db": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Generate Q Paper Sets In Latex .tex format from db",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DB"
+                ],
+                "summary": "Generate Q Paper Sets In Latex .tex format from db",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "GenerateQpaperSetsFromDBRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.GenerateQpaperSetsFromDBRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -105,6 +138,29 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "subject_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.GenerateQpaperSetsFromDBRequest": {
+            "type": "object",
+            "properties": {
+                "exam_details": {
+                    "$ref": "#/definitions/models.ExamDetails"
+                },
+                "exam_type": {
+                    "type": "string"
+                },
+                "number_of_sets": {
+                    "type": "integer"
+                },
+                "q_paper_codes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "subject_code": {
                     "type": "string"
                 }
             }
