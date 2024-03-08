@@ -10,9 +10,9 @@
 \hspace{0.75in}
 \begin{minipage}[c]{0.8\textwidth}
 	\begin{center}
-		{\large	{{.ExamDetails.College}} \par
+		{\large	\textbf {{.ExamDetails.College}} \par
 		\large	{{.ExamDetails.Department}}	\par
-	\large \textbf{ {{.ExamDetails.SubjectName}} ({{.ExamDetails.SubjectCode}})}	\par
+	\large { {{.ExamDetails.SubjectName}} ({{.ExamDetails.SubjectCode}})}	\par
 \small	{{.ExamDetails.ExamName}}, Date: {{.ExamDetails.Date}}}
 	\end{center}
 \end{minipage}
@@ -26,7 +26,7 @@
 \centering
 % {\small \bfseries {{range $_, $value := .ExamDetails.Instructions}}	{{ $value }} {{ end }}}
 \hspace{1.55in}
-{\medium \bfseries Section-A }
+{\medium \bfseries Part-A }
 \newline
 \begin{questions}
 \pointsdroppedatright
@@ -39,7 +39,7 @@
 \centering
 \vspace{0.25in}
 \hspace{1.55in}
-{\medium \bfseries Section-{{$type}} }
+{\medium \bfseries Part-{{$type}} }
 \newline
 {{range $_, $questionPair := $sectionQuestions}}
 \question

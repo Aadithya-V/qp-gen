@@ -129,7 +129,7 @@ func GenerateQpaperSetsFromDB(c *gin.Context, req *models.GenerateQpaperSetsFrom
 
 		delete(tmplData.QuestionsBySection, "A")
 
-		c.Writer.WriteString("\n-------------Question Paper Set Start--------------- \n")
+		c.Writer.WriteString("\n%-------------Question Paper Set Start--------------- \n")
 
 		err = tmpl.Execute(c.Writer, tmplData)
 		if err != nil {
@@ -137,7 +137,7 @@ func GenerateQpaperSetsFromDB(c *gin.Context, req *models.GenerateQpaperSetsFrom
 			return err
 		}
 
-		c.Writer.WriteString("\n----------------Question Paper Set End ---------------- \n")
+		c.Writer.WriteString("\n%----------------Question Paper Set End ---------------- \n")
 
 	}
 
