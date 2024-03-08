@@ -31,7 +31,7 @@
 \begin{questions}
 \pointsdroppedatright
 {{range $_, $v := .SectionA}}
-\question[{{$v.Marks}}]{{$v.Text}}
+\question[{{2}}]{{$v.Text}}
 \droppoints
 {{end}}
 
@@ -42,13 +42,17 @@
 {\medium \bfseries Part-{{$type}} }
 \newline
 {{range $_, $questionPair := $sectionQuestions}}
+\vspace{0.1cm}
 \question
 \begin{parts}
 {{range $_, $question := $questionPair}}
 %$questionPair[0].Choice
 \part[{{$question.Marks}}] 
+{{ if gt (len $question.Text) 0 }}
 {{ $question.Text }} 
 \droppoints
+{{end}}
+
 {{if $question.SubQuestions}} 
 \begin{subparts}
 {{range $_, $subQuestion := $question.SubQuestions}}
@@ -60,7 +64,9 @@
 {{end}}
 {{if $question.Choice}} 
 \begin{center}
+\vspace{0.1cm}
 \textbf{(OR)}
+\vspace{0.1cm}
 \end{center}
 {{end}}
 {{end}}
