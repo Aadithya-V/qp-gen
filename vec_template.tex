@@ -25,28 +25,26 @@
 % \noindent
 % \centering
 % {\small \bfseries {{range $_, $value := .ExamDetails.Instructions}}	{{ $value }} {{ end }}}
-
+{\medium \bfseries Section-A }
+\newline
 \begin{questions}
 \pointsdroppedatright
+{{range $_, $v := .SectionA}}
+\question[{{$v.Marks}}]{{$v.Text}}
+\droppoints
+{{end}}
 
 {{range $type, $sectionQuestions := .QuestionsBySection}}
 \centering
-{\fontsize{10pt}{12pt}\selectfont
-\bfseries Section-{{$type}} }
+{\medium \bfseries Section-{{$type}} }
 \newline
 {{range $_, $questionPair := $sectionQuestions}}
-{{if index $questionPair 0}} 
+\question
 \begin{parts}
-{{end}}
 {{range $_, $question := $questionPair}}
 %$questionPair[0].Choice
-{{if index $questionPair 0}} 
 \part[{{$question.Marks}}] 
 {{ $question.Text }} 
-{{else}}
-\question[{{$question.Marks}}] 
-{{ $question.Text }} 
-{{end}}
 \droppoints
 {{if $question.SubQuestions}} 
 \begin{parts}
@@ -70,5 +68,4 @@
 {{ end }}
 \end{questions}
 \vspace{0.75in}
-{\large \bfseries Best wishes}
 \end{document}

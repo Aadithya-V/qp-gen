@@ -88,12 +88,16 @@ func GenerateQpaperSetsFromDB(c *gin.Context, req *models.GenerateQpaperSetsFrom
 		qsbySection := qStore.PickQSet()
 
 		type TemplatePipeline struct {
+			// for section a
+			SectionA []*Question
+			// for b and c
 			QuestionsBySection map[string][][2]*Question
 
 			ExamDetails models.ExamDetails
 		}
 
 		var tmplData = TemplatePipeline{
+			SectionA:           make([]*Question, 0),
 			QuestionsBySection: make(map[string][][2]*Question),
 			ExamDetails:        req.ExamDetails,
 		}
@@ -108,11 +112,7 @@ func GenerateQpaperSetsFromDB(c *gin.Context, req *models.GenerateQpaperSetsFrom
 
 			if k == "A" {
 				for i := 0; i < len(v); i++ {
-					var qpair [2]*Question
-					v[i].Choice = false
-					qpair[0] = v[i]
-					qpair[1] = &Question{}
-					qpairs = append(qpairs, qpair)
+					tmplData.SectionA = append(tmplData.SectionA, v[i])
 				}
 			} else {
 				for j := 1; j < len(v); j += 2 {
@@ -126,6 +126,8 @@ func GenerateQpaperSetsFromDB(c *gin.Context, req *models.GenerateQpaperSetsFrom
 			tmplData.QuestionsBySection[k] = append(tmplData.QuestionsBySection[k], qpairs...)
 
 		}
+
+		delete(tmplData.QuestionsBySection, "A")
 
 		c.Writer.WriteString("\n-------------Question Paper Set Start--------------- \n")
 
