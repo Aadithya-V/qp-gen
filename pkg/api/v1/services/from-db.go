@@ -292,7 +292,7 @@ func pickQs(qs []*Question, nums int) []*Question {
 	return ret
 }
 
-// unit,section,question,sub-question,marks,sub-question,marks,sub-question,marks,sub-question,marks
+// unit,section,external_ref,question,sub-question,marks,sub-question,marks,sub-question,marks,sub-question,marks
 var CSV_HEADER_ROW = []string{"unit", "section", "external_ref", "question", "sub_question", "marks", "sub_question", "marks", "sub_question", "marks", "sub_question", "marks"}
 
 func ParseAndSaveQuestionsFromCSV(c *gin.Context, fh *multipart.FileHeader, subCode, year string) error {
@@ -354,9 +354,9 @@ type DbRow struct {
 }
 
 type DbRowQuestion struct {
-	Marks        int             `json:"mark"`
-	Text         string          `json:"text"`          // can be empty
-	SubQuestions []DbRowQuestion `json:"sub_questions"` // sub-divisions
+	Marks        int             `json:"mark,omitempty"`
+	Text         string          `json:"text,omitempty"`          // can be empty
+	SubQuestions []DbRowQuestion `json:"sub_questions,omitempty"` // sub-divisions
 }
 
 func BatchInsertCsvData(dbRows []*DbRow, year, subCode string) error {
@@ -372,7 +372,7 @@ func BatchInsertCsvData(dbRows []*DbRow, year, subCode string) error {
 
 	// Prepare the insert statement
 	//select unit, section, question from question_bank_data where
-	stmt, err := tx.Prepare("INSERT INTO question_bank_data (academic_year, subject_code, external_ref, unit, section, mark, question) VALUES (?, ?, ?, ?, ?, ?, ?)")
+	stmt, err := tx.Prepare("INSERT INTO question_bank_data (academic_year, sub_code, external_ref, unit, section, mark, question) VALUES (?, ?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		log.Println(err.Error())
 		tx.Rollback()
