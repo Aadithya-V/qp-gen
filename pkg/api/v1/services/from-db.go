@@ -323,6 +323,7 @@ func ParseAndSaveQuestionsFromCSV(c *gin.Context, fh *multipart.FileHeader, subC
 	records = records[1:]
 
 	if !stringArraysEqual(headerRow, CSV_HEADER_ROW) {
+		fmt.Println(headerRow)
 		err := fmt.Errorf("wrong header format. required- %s", CSV_HEADER_ROW)
 		log.Println(err.Error())
 		return err
@@ -489,15 +490,27 @@ func parseCSVFile(file io.Reader) ([][]string, error) {
 }
 
 func stringArraysEqual(arr1, arr2 []string) bool {
+	fmt.Printf("\n len arr1: %v   len arr2: %v \n", len(arr1), len(arr2))
 	if len(arr1) != len(arr2) {
+		fmt.Println("MARKER within len not equal")
 		return false
 	}
 
 	for i := range arr1 {
-		if arr1[i] != arr2[i] {
+		fmt.Printf("\n arr1 elem: %x   arr2 elem: %x \n", removeBOM(arr1[i]), removeBOM(arr2[i]))
+		if removeBOM(arr1[i]) != removeBOM(arr2[i]) {
+			fmt.Println("MARKER elements not equal")
 			return false
 		}
 	}
 
 	return true
+}
+
+// Function to remove UTF-8 BOM from a string
+func removeBOM(s string) string {
+	if len(s) >= 3 && s[0] == '\xEF' && s[1] == '\xBB' && s[2] == '\xBF' {
+		return s[3:]
+	}
+	return s
 }
