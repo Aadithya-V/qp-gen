@@ -2,10 +2,15 @@ package services
 
 import (
 	"database/sql"
+	"encoding/csv"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"log"
 	"math/rand"
+	"mime/multipart"
+	"strconv"
 	"strings"
 	"text/template"
 
@@ -151,6 +156,7 @@ func GetQuestionFromDB(req *models.GenerateQpaperSetsFromDBRequest, units []stri
 	query := fmt.Sprintf(`select unit, section, question from question_bank_data where unit in (%s);`, inClause)
 
 	db := database.NewMySQLSession()
+	defer db.Close()
 
 	results, err := db.Query(query)
 	if err != nil {
@@ -284,4 +290,214 @@ func pickQs(qs []*Question, nums int) []*Question {
 	}
 
 	return ret
+}
+
+// unit,section,question,sub-question,marks,sub-question,marks,sub-question,marks,sub-question,marks
+var CSV_HEADER_ROW = []string{"unit", "section", "external_ref", "question", "sub_question", "marks", "sub_question", "marks", "sub_question", "marks", "sub_question", "marks"}
+
+func ParseAndSaveQuestionsFromCSV(c *gin.Context, fh *multipart.FileHeader, subCode, year string) error {
+	file, err := fh.Open()
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+	defer file.Close()
+
+	// Parse the CSV file
+	records, err := parseCSVFile(file)
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+
+	j, _ := json.Marshal(records)
+	fmt.Println(string(j))
+
+	if len(records) <= 1 { // including only header row and no data
+		err := errors.New("no data in uploaded file")
+		log.Println(err.Error())
+		return err
+	}
+
+	headerRow := records[0]
+	records = records[1:]
+
+	if !stringArraysEqual(headerRow, CSV_HEADER_ROW) {
+		err := fmt.Errorf("wrong header format. required- %s", CSV_HEADER_ROW)
+		log.Println(err.Error())
+		return err
+	}
+
+	dbRows, err := prepareDataForBatchInsert(records)
+	if err != nil {
+		err := fmt.Errorf("error preparing data for db batch insert- error: %w", err)
+		log.Println(err.Error())
+		return err
+	}
+
+	err = BatchInsertCsvData(dbRows, year, subCode)
+	if err != nil {
+		err := fmt.Errorf("error during db batch insert- error: %w", err)
+		log.Println(err.Error())
+		return err
+	}
+
+	return nil
+}
+
+type DbRow struct {
+	Unit        string
+	Section     string
+	Marks       int
+	ExternalRef string // q number in question bank / external-ref
+	Question    DbRowQuestion
+}
+
+type DbRowQuestion struct {
+	Marks        int             `json:"mark"`
+	Text         string          `json:"text"`          // can be empty
+	SubQuestions []DbRowQuestion `json:"sub_questions"` // sub-divisions
+}
+
+func BatchInsertCsvData(dbRows []*DbRow, year, subCode string) error {
+	db := database.NewMySQLSession()
+	defer db.Close()
+
+	// Start a transaction
+	tx, err := db.Begin()
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+
+	// Prepare the insert statement
+	//select unit, section, question from question_bank_data where
+	stmt, err := tx.Prepare("INSERT INTO question_bank_data (academic_year, subject_code, external_ref, unit, section, mark, question) VALUES (?, ?, ?, ?, ?, ?, ?)")
+	if err != nil {
+		log.Println(err.Error())
+		tx.Rollback()
+		return err
+	}
+	defer stmt.Close()
+
+	for _, row := range dbRows {
+		j, err := json.Marshal(row.Question)
+		if err != nil {
+			tx.Rollback() // Rollback if executing the statement fails
+			log.Println(err)
+			return err
+		}
+
+		_, err = stmt.Exec(year, subCode, row.ExternalRef, row.Unit, row.Section, row.Marks, string(j))
+		if err != nil {
+			tx.Rollback() // Rollback if executing the statement fails
+			log.Println(err)
+			return err
+		}
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
+		tx.Rollback() // Rollback if committing the transaction fails
+		log.Println(err)
+		return err
+	}
+
+	log.Println("Batch insert completed successfully")
+
+	return nil
+}
+
+func validateCsvRecord(record []string) bool {
+	return true
+}
+
+func prepareDataForBatchInsert(records [][]string) ([]*DbRow, error) {
+	dbRows := make([]*DbRow, 0)
+	for _, record := range records {
+		if !validateCsvRecord(record) || len(record) < len(CSV_HEADER_ROW) {
+			continue // continue if empty
+			/* err := fmt.Errorf("csv record not valid- %s", record)
+			log.Printf(err.Error())
+			return nil, err */
+		}
+		// unit,section,question,sub-question,marks,sub-question,marks,sub-question,marks,sub-question,marks
+		dbRow := &DbRow{
+			Unit:        record[0],
+			Section:     record[1],
+			ExternalRef: record[2],
+		}
+
+		switch dbRow.Section {
+		case "A":
+			dbRow.Marks = 2
+		case "B":
+			dbRow.Marks = 13
+		case "C":
+			dbRow.Marks = 15
+		}
+
+		dbRow.Question.Marks = dbRow.Marks
+		dbRow.Question.Text = record[3]
+
+		dbRow.Question.SubQuestions = make([]DbRowQuestion, 0)
+
+		if len(record[4]) != 0 {
+			m, _ := strconv.Atoi(record[5])
+			dbRow.Question.SubQuestions = append(dbRow.Question.SubQuestions, DbRowQuestion{
+				Text:  record[4],
+				Marks: m,
+			})
+		}
+
+		if len(record[6]) != 0 {
+			m, _ := strconv.Atoi(record[7])
+			dbRow.Question.SubQuestions = append(dbRow.Question.SubQuestions, DbRowQuestion{
+				Text:  record[6],
+				Marks: m,
+			})
+		}
+
+		if len(record[8]) != 0 {
+			m, _ := strconv.Atoi(record[9])
+			dbRow.Question.SubQuestions = append(dbRow.Question.SubQuestions, DbRowQuestion{
+				Text:  record[8],
+				Marks: m,
+			})
+		}
+
+		if len(record[10]) != 0 {
+			m, _ := strconv.Atoi(record[11])
+			dbRow.Question.SubQuestions = append(dbRow.Question.SubQuestions, DbRowQuestion{
+				Text:  record[10],
+				Marks: m,
+			})
+		}
+
+		dbRows = append(dbRows, dbRow)
+	}
+	return dbRows, nil
+}
+
+func parseCSVFile(file io.Reader) ([][]string, error) {
+	reader := csv.NewReader(file)
+	records, err := reader.ReadAll()
+	if err != nil {
+		return nil, err
+	}
+	return records, nil
+}
+
+func stringArraysEqual(arr1, arr2 []string) bool {
+	if len(arr1) != len(arr2) {
+		return false
+	}
+
+	for i := range arr1 {
+		if arr1[i] != arr2[i] {
+			return false
+		}
+	}
+
+	return true
 }

@@ -132,6 +132,37 @@ paths:
       summary: Generate Q Paper Sets In Latex .tex format from db
       tags:
       - DB
+  /api/v1/upload/{academic_year}/{subject_code}:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload Question Bank in CSV format
+      parameters:
+      - description: academic year
+        in: path
+        name: academic_year
+        required: true
+        type: string
+      - description: subject code
+        in: path
+        name: subject_code
+        required: true
+        type: string
+      - description: File to upload
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Upload Question Bank in CSV format
+      tags:
+      - Upload
 securityDefinitions:
   BearerAuth:
     description: 'Enter the Bearer Authorization string as following: `Bearer Generated-JWT-Token`'

@@ -1,5 +1,7 @@
 http://localhost:8001/qp-gen/api/docs/index.html#/  - swagger
 
+curl -X POST http://localhost:8001/qp-gen/api/v1/upload   -F "file=@csv_example.csv"   -H "Content-Type: multipart/form-data"
+
 
 {
   "exam_details": {

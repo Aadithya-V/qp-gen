@@ -39,6 +39,8 @@ func Router() *gin.Engine {
 
 				versionOne.POST("q-paper-from-db", controllers.GenerateQpaperSetsFromDB)
 
+				versionOne.POST("upload/:academic_year/:subject_code", controllers.UploadCSV)
+
 			}
 			apiGroup.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, ginSwagger.DefaultModelsExpandDepth(1), ginSwagger.DocExpansion("none"), ginSwagger.PersistAuthorization(true)))
 
