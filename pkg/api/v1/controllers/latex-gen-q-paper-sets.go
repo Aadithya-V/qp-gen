@@ -52,16 +52,38 @@ func GenerateQpaperSetsFromDB(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, "all params are required")
+		c.Abort()
 		return
 	}
 
-	err := services.GenerateQpaperSetsFromDB(c, &req)
+	zipBuffer, err := services.GenerateQpaperSetsFromDB(c, &req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
+		c.Abort()
 		return
 	}
 
-	c.JSON(200, "")
+	// Set headers for the response
+	c.Header("Content-Type", "application/zip")
+	c.Header("Content-Disposition", "attachment; filename=files.zip")
+	c.Header("Content-Length", fmt.Sprint(zipBuffer.Len()))
+
+	// Write the ZIP archive to the response
+	// Write the buffer to the response
+	c.Writer.WriteHeader(http.StatusOK)
+	_, err = c.Writer.Write(zipBuffer.Bytes())
+	if err != nil {
+		c.String(http.StatusInternalServerError, "Failed to write ZIP archive to response")
+		c.Abort()
+		return
+	}
+	// why this doesn't work? or does it test properly after having added content length
+	/* if _, err := io.Copy(c.Writer, zipBuffer); err != nil {
+		c.String(http.StatusInternalServerError, "Failed to write ZIP archive to response")
+		c.Abort()
+		return
+	} */
+
 }
 
 // @Summary	Upload Question Bank in CSV format

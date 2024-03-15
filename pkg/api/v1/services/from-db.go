@@ -1,6 +1,8 @@
 package services
 
 import (
+	"archive/zip"
+	"bytes"
 	"database/sql"
 	"encoding/csv"
 	"encoding/json"
@@ -10,7 +12,6 @@ import (
 	"log"
 	"math/rand"
 	"mime/multipart"
-	"strconv"
 	"strings"
 	"text/template"
 
@@ -19,7 +20,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GenerateQpaperSetsFromDB(c *gin.Context, req *models.GenerateQpaperSetsFromDBRequest) error {
+func GenerateQpaperSetsFromDB(c *gin.Context, req *models.GenerateQpaperSetsFromDBRequest) (*bytes.Buffer, error) {
 
 	var units []string
 
@@ -72,12 +73,12 @@ func GenerateQpaperSetsFromDB(c *gin.Context, req *models.GenerateQpaperSetsFrom
 			"5:C": 0,
 		}
 	} else {
-		return errors.New("unknown exam type")
+		return nil, errors.New("unknown exam type")
 	}
 
 	questions, err := GetQuestionFromDB(req, units)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	qStore := BuildQStore(questions, qsPerType)
@@ -85,8 +86,13 @@ func GenerateQpaperSetsFromDB(c *gin.Context, req *models.GenerateQpaperSetsFrom
 	tmpl, err := template.ParseFiles("vec_template.tex")
 	if err != nil {
 		fmt.Println("Error parsing template:", err)
-		return err
+		return nil, err
 	}
+
+	//var overleafLinks []string = make([]string, 0)
+	// Create a buffer to store the ZIP archive
+	zipBuffer := new(bytes.Buffer)
+	zipWriter := zip.NewWriter(zipBuffer)
 
 	for i := req.NumberOfSets; i > 0; i-- {
 
@@ -134,19 +140,33 @@ func GenerateQpaperSetsFromDB(c *gin.Context, req *models.GenerateQpaperSetsFrom
 
 		delete(tmplData.QuestionsBySection, "A")
 
-		c.Writer.WriteString("\n%-------------Question Paper Set Start--------------- \n")
+		// var buf bytes.Buffer
 
-		err = tmpl.Execute(c.Writer, tmplData)
+		// Create a new file in the archive
+		fileWriter, err := zipWriter.Create(fmt.Sprintf("file-%v.tex", i))
 		if err != nil {
-			fmt.Println("Error executing template:", err)
-			return err
+			return nil, fmt.Errorf("Failed to create file in archive. Err: %w", err.Error())
 		}
 
-		c.Writer.WriteString("\n%----------------Question Paper Set End ---------------- \n")
+		err = tmpl.Execute(fileWriter, tmplData)
+		if err != nil {
+			fmt.Println("Error executing template:", err)
+			return nil, err
+		}
+
+		/* link := "https://www.overleaf.com/docs?encoded_snip=" + url.QueryEscape(buf.String())
+		link = strings.ReplaceAll(link, "%5Cn", "%0A")
+		link = strings.ReplaceAll(link, "%5C%5C", "%5C")
+
+		overleafLinks = append(overleafLinks, link) */
 
 	}
 
-	return nil
+	if err = zipWriter.Close(); err != nil {
+		return nil, fmt.Errorf("Failed to close ZIP writer. Err: %w", err.Error())
+	}
+
+	return zipBuffer, nil
 }
 
 func GetQuestionFromDB(req *models.GenerateQpaperSetsFromDBRequest, units []string) ([]*Question, error) {
@@ -206,7 +226,7 @@ func BuildQStore(questions []*Question, qsPerType map[string]int) QStore {
 		QsPerType: qsPerType,
 	}
 
-	for k, _ := range qsPerType {
+	for k := range qsPerType {
 		ret.ByTypes[k] = make([]*Question, 0)
 	}
 
@@ -349,13 +369,13 @@ func ParseAndSaveQuestionsFromCSV(c *gin.Context, fh *multipart.FileHeader, subC
 type DbRow struct {
 	Unit        string
 	Section     string
-	Marks       int
+	Marks       string
 	ExternalRef string // q number in question bank / external-ref
 	Question    DbRowQuestion
 }
 
 type DbRowQuestion struct {
-	Marks        int             `json:"mark,omitempty"`
+	Marks        string          `json:"mark,omitempty"`
 	Text         string          `json:"text,omitempty"`          // can be empty
 	SubQuestions []DbRowQuestion `json:"sub_questions,omitempty"` // sub-divisions
 }
@@ -431,11 +451,11 @@ func prepareDataForBatchInsert(records [][]string) ([]*DbRow, error) {
 
 		switch dbRow.Section {
 		case "A":
-			dbRow.Marks = 2
+			dbRow.Marks = "2"
 		case "B":
-			dbRow.Marks = 13
+			dbRow.Marks = "13"
 		case "C":
-			dbRow.Marks = 15
+			dbRow.Marks = "15"
 		}
 
 		dbRow.Question.Marks = dbRow.Marks
@@ -444,34 +464,30 @@ func prepareDataForBatchInsert(records [][]string) ([]*DbRow, error) {
 		dbRow.Question.SubQuestions = make([]DbRowQuestion, 0)
 
 		if len(record[4]) != 0 {
-			m, _ := strconv.Atoi(record[5])
 			dbRow.Question.SubQuestions = append(dbRow.Question.SubQuestions, DbRowQuestion{
 				Text:  record[4],
-				Marks: m,
+				Marks: record[5],
 			})
 		}
 
 		if len(record[6]) != 0 {
-			m, _ := strconv.Atoi(record[7])
 			dbRow.Question.SubQuestions = append(dbRow.Question.SubQuestions, DbRowQuestion{
 				Text:  record[6],
-				Marks: m,
+				Marks: record[7],
 			})
 		}
 
 		if len(record[8]) != 0 {
-			m, _ := strconv.Atoi(record[9])
 			dbRow.Question.SubQuestions = append(dbRow.Question.SubQuestions, DbRowQuestion{
 				Text:  record[8],
-				Marks: m,
+				Marks: record[9],
 			})
 		}
 
 		if len(record[10]) != 0 {
-			m, _ := strconv.Atoi(record[11])
 			dbRow.Question.SubQuestions = append(dbRow.Question.SubQuestions, DbRowQuestion{
 				Text:  record[10],
-				Marks: m,
+				Marks: record[11],
 			})
 		}
 
