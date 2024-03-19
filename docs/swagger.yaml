@@ -5,6 +5,12 @@ definitions:
         type: string
       college_name:
         type: string
+      common_to:
+        type: string
+      course_year:
+        type: string
+      department_abbreviation:
+        type: string
       department_name:
         type: string
       exam_date:
@@ -25,11 +31,15 @@ definitions:
         type: string
       examination_name:
         type: string
+      regulation:
+        type: string
       semester:
         type: string
       subject_code:
         type: string
       subject_name:
+        type: string
+      year:
         type: string
     type: object
   models.GenerateQpaperSetsFromDBRequest:

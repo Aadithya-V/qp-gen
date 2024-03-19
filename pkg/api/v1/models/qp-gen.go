@@ -1,20 +1,25 @@
 package models
 
 type ExamDetails struct {
-	College      string   `json:"college_name"`
-	Department   string   `json:"department_name"`
-	ExamName     string   `json:"examination_name"`
-	SubjectName  string   `json:"subject_name"`
-	SubjectCode  string   `json:"subject_code"`
-	Semester     string   `json:"semester"`
-	AcademicYear string   `json:"academic_year"`
-	Date         string   `json:"exam_date"`
-	Duration     string   `json:"exam_duration"`
-	StartTime    string   `json:"exam_start_time"`
-	EndTime      string   `json:"exam_end_time"`
-	Session      string   `json:"exam_session"`
-	TotalMarks   string   `json:"exam_total_marks"`
-	Instructions []string `json:"exam_instructions"`
+	College                string   `json:"college_name"`
+	Department             string   `json:"department_name"`
+	DepartmentAbbreviation string   `json:"department_abbreviation"`
+	ExamName               string   `json:"examination_name"`
+	Regulation             string   `json:"regulation"`
+	CourseYear             string   `json:"course_year"`
+	SubjectName            string   `json:"subject_name"`
+	SubjectCode            string   `json:"subject_code"`
+	CommonTo               string   `json:"common_to"`
+	Semester               string   `json:"semester"`
+	Year                   string   `json:"year"`
+	AcademicYear           string   `json:"academic_year"`
+	Date                   string   `json:"exam_date"`
+	Duration               string   `json:"exam_duration"`
+	StartTime              string   `json:"exam_start_time"`
+	EndTime                string   `json:"exam_end_time"`
+	Session                string   `json:"exam_session"`
+	TotalMarks             string   `json:"exam_total_marks"`
+	Instructions           []string `json:"exam_instructions"`
 }
 
 type QuestionsByType struct {

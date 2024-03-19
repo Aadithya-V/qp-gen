@@ -141,6 +141,15 @@
                 "college_name": {
                     "type": "string"
                 },
+                "common_to": {
+                    "type": "string"
+                },
+                "course_year": {
+                    "type": "string"
+                },
+                "department_abbreviation": {
+                    "type": "string"
+                },
                 "department_name": {
                     "type": "string"
                 },
@@ -171,6 +180,9 @@
                 "examination_name": {
                     "type": "string"
                 },
+                "regulation": {
+                    "type": "string"
+                },
                 "semester": {
                     "type": "string"
                 },
@@ -178,6 +190,9 @@
                     "type": "string"
                 },
                 "subject_name": {
+                    "type": "string"
+                },
+                "year": {
                     "type": "string"
                 }
             }

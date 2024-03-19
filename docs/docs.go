@@ -149,6 +149,15 @@ const docTemplate = `{
                 "college_name": {
                     "type": "string"
                 },
+                "common_to": {
+                    "type": "string"
+                },
+                "course_year": {
+                    "type": "string"
+                },
+                "department_abbreviation": {
+                    "type": "string"
+                },
                 "department_name": {
                     "type": "string"
                 },
@@ -179,6 +188,9 @@ const docTemplate = `{
                 "examination_name": {
                     "type": "string"
                 },
+                "regulation": {
+                    "type": "string"
+                },
                 "semester": {
                     "type": "string"
                 },
@@ -186,6 +198,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "subject_name": {
+                    "type": "string"
+                },
+                "year": {
                     "type": "string"
                 }
             }

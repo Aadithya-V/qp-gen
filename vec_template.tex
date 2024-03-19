@@ -23,23 +23,34 @@
 \end{adjustwidth}
 	\begin{center}
 		\fbox{Question Paper Code: {{.QuestionPaperCode}}} \\
-		{\large	\textbf {{.ExamDetails.College}} \par
-		\large	{{.ExamDetails.Department}}	\par
-	\large { {{.ExamDetails.SubjectName}} ({{.ExamDetails.SubjectCode}})}	\par
-\small	{{.ExamDetails.ExamName}}, Date: {{.ExamDetails.Date}}}
+		\vspace{0.45cm}
+		\large	\textbf {{.ExamDetails.College}} \par \\
+		\small (An Autonomouos Institution) \\
+		\small SRM Nagar, Kattankulathur- 603203 \\
+		\medium	{{.ExamDetails.Department}}	\par \\
+		\vspace{0.35cm}
+		\medium	{{.ExamDetails.ExamName}} \\
+		\small {{.ExamDetails.AcademicYear}} \\
+		\vspace{0.35cm}
+		\medium {{.ExamDetails.SubjectCode}} - {{.ExamDetails.SubjectName}} \\
 	\end{center}
+
+	\textbf{Branch: } B.E({{.ExamDetails.DepartmentAbbreviation}}) \hfill \textbf{Date: } {{.ExamDetails.Date}} \\
+	\textbf{Year: } {{.ExamDetails.CourseYear}} \hfill \textbf{Maximum: } {{.ExamDetails.TotalMarks}} Marks \\
+	\textbf{Semester: } {{.ExamDetails.Semester}} \hfill \textbf{Duration: } {{.ExamDetails.Duration}} \\
+
+	\begin{center} \textbf{Answer ALL questions} \end{center}
 \end{minipage}
 \par
 \vspace{0.2in}
 \noindent
-\uline{Timing: {{.ExamDetails.StartTime}} to {{.ExamDetails.EndTime}}	\hfill {{.ExamDetails.AcademicYear}}, {{.ExamDetails.Semester}}		\hfill Max mark: {{.ExamDetails.TotalMarks}}}
 \par 
 \vspace{0.25in}
 % \noindent
 \centering
 % {\small \bfseries {{range $_, $value := .ExamDetails.Instructions}}	{{ $value }} {{ end }}}
 \hspace{1.55in}
-{\medium \bfseries Part-A }
+{\medium \bfseries Part A - (10 x 2 = 10 marks)}
 \newline
 \begin{questions}
 \pointsdroppedatright
@@ -52,7 +63,7 @@
 \centering
 \vspace{0.25in}
 \hspace{1.55in}
-{\medium \bfseries Part-{{$type}} }
+{\medium \bfseries Part {{$type}}}
 \newline
 {{range $_, $questionPair := $sectionQuestions}}
 \vspace{0.1cm}
