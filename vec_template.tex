@@ -2,6 +2,8 @@
 \usepackage{graphicx}
 \usepackage[left=0.8in, top=0.7in, total={6.2in,10in}]{geometry}
 \usepackage[normalem]{ulem}
+\usepackage{array}
+\usepackage{changepage} % for adjustwidth environment
 \renewcommand\ULthickness{1.0pt}   %%---> For changing thickness of underline
 \setlength\ULdepth{1.3ex}%\maxdimen ---> For changing depth of underline
 
@@ -9,7 +11,18 @@
 	%\thispagestyle{empty}
 \hspace{0.75in}
 \begin{minipage}[c]{0.8\textwidth}
+	\begin{adjustwidth}{\dimexpr\linewidth-3.5cm}{\dimexpr\linewidth-0.80cm} 
+	\[
+		\mathrm{Reg.No.}    \hspace{0.1cm}
+\begin{array}{|*{12}{c|}}
+\hline
+ & & & & & & & & & & & \\
+\hline
+\end{array}
+\]
+\end{adjustwidth}
 	\begin{center}
+		\fbox{Question Paper Code: {{.QuestionPaperCode}}} \\
 		{\large	\textbf {{.ExamDetails.College}} \par
 		\large	{{.ExamDetails.Department}}	\par
 	\large { {{.ExamDetails.SubjectName}} ({{.ExamDetails.SubjectCode}})}	\par
