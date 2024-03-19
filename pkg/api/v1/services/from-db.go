@@ -22,6 +22,10 @@ import (
 
 func GenerateQpaperSetsFromDB(c *gin.Context, req *models.GenerateQpaperSetsFromDBRequest) (*bytes.Buffer, error) {
 
+	if len(req.QpaperCodes) != int(req.NumberOfSets) {
+		return nil, errors.New("mismatch between qpaper codes available and number of sets requested")
+	}
+
 	var units []string
 
 	// Unit 1:Section A: int
@@ -104,6 +108,8 @@ func GenerateQpaperSetsFromDB(c *gin.Context, req *models.GenerateQpaperSetsFrom
 			// for b and c
 			QuestionsBySection map[string][][2]*Question
 
+			QuestionPaperCode string
+
 			ExamDetails models.ExamDetails
 		}
 
@@ -111,7 +117,9 @@ func GenerateQpaperSetsFromDB(c *gin.Context, req *models.GenerateQpaperSetsFrom
 			SectionA:           make([]*Question, 0),
 			QuestionsBySection: make(map[string][][2]*Question),
 			ExamDetails:        req.ExamDetails,
+			QuestionPaperCode:  req.QpaperCodes[0],
 		}
+		req.QpaperCodes = req.QpaperCodes[1:]
 
 		fmt.Println("--------------------------------------------------------")
 
@@ -172,9 +180,9 @@ func GenerateQpaperSetsFromDB(c *gin.Context, req *models.GenerateQpaperSetsFrom
 func GetQuestionFromDB(req *models.GenerateQpaperSetsFromDBRequest, units []string) ([]*Question, error) {
 
 	inClause := "'" + strings.Join(units, "','") + "'"
-	// sub_code = %s and
-	query := fmt.Sprintf(`select unit, section, question from question_bank_data where unit in (%s);`, inClause)
-
+	subCode := "'" + req.SubjectCode + "'"
+	query := fmt.Sprintf(`select unit, section, question from question_bank_data where unit in (%s) AND sub_code=%s;`, inClause, subCode)
+	fmt.Println(query)
 	db := database.NewMySQLSession()
 	defer db.Close()
 
@@ -435,6 +443,10 @@ func validateCsvRecord(record []string) bool {
 
 func prepareDataForBatchInsert(records [][]string) ([]*DbRow, error) {
 	dbRows := make([]*DbRow, 0)
+
+	prevUnit := ""
+	prevSection := ""
+
 	for _, record := range records {
 		if !validateCsvRecord(record) || len(record) < len(CSV_HEADER_ROW) {
 			continue // continue if empty
@@ -443,9 +455,23 @@ func prepareDataForBatchInsert(records [][]string) ([]*DbRow, error) {
 			return nil, err */
 		}
 		// unit,section,question,sub-question,marks,sub-question,marks,sub-question,marks,sub-question,marks
+
+		if (len(prevSection) == 0 && len(record[0]) == 0) || (len(prevUnit) == 0 && len(record[1]) == 0) {
+			j, _ := json.Marshal(record)
+			return nil, fmt.Errorf("missing section or unit in parsed CSV- record: %v", string(j))
+		}
+
+		if len(record[0]) != 0 && prevUnit != record[0] {
+			prevUnit = record[0]
+		}
+
+		if len(record[1]) != 0 && prevSection != record[1] {
+			prevSection = record[1]
+		}
+
 		dbRow := &DbRow{
-			Unit:        record[0],
-			Section:     record[1],
+			Unit:        prevUnit,
+			Section:     prevSection,
 			ExternalRef: record[2],
 		}
 
