@@ -61,9 +61,8 @@ curl -X POST http://localhost:8001/qp-gen/api/v1/upload/654af/adf5   -F "file=@c
 "Distinguish between coupling and cohesion.",
 "When to use Patterns?",
 "Analyze Green Enterprise Architecture."
-
       ],
-      "section_name": "",
+      "section_name": "A",
       "total_questions": 5,
       "type_number": 1
     }
